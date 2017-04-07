@@ -23,9 +23,18 @@
           pageTitle: 'Articles List'
         }
       })
+  .state('articles.create', {
+    url: '/create',
+    templateUrl: '/modules/articles/client/views/form-article.client.view.html',
+    controller: 'ArticlesController',
+    controllerAs: 'vm',
+    resolve: {
+      articleResolve: newArticle
+    }
+  })
       .state('articles.view', {
         url: '/:articleId',
-        templateUrl: '/modules/articles/client/views/view-article.client.view.html',
+        templateUrl: '/modules/articles/client/views/comment-article.client.view.html',
         controller: 'ArticlesController',
         controllerAs: 'vm',
         resolve: {
@@ -43,5 +52,11 @@
     return ArticlesService.get({
       articleId: $stateParams.articleId
     }).$promise;
+  }
+
+  newArticle.$inject = ['ArticlesService'];
+
+  function newArticle(ArticlesService) {
+    return new ArticlesService();
   }
 }());
