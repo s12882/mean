@@ -46,6 +46,18 @@
         data: {
           pageTitle: 'Article {{ articleResolve.title }}'
         }
+      })
+	  .state('articles.edit', {
+        url: '/:articleId/edit',
+        templateUrl: '/modules/articles/client/views/form-article.client.view.html',
+        controller: 'ArticlesAdminController',
+        controllerAs: 'vm',
+        data: {
+          roles: ['user']
+        },
+        resolve: {
+          articleResolve: getArticle
+        }
       });
   }
 

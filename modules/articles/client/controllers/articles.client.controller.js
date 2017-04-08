@@ -42,6 +42,7 @@
 
       function successCallback(res) {
         $state.go('articles.view'); // should we send the User to the list or the updated Article's view?
+		vm.article.comment.commentContent = '';
       }
 
       function errorCallback(res) {
