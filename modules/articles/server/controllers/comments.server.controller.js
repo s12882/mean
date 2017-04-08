@@ -5,27 +5,25 @@
  */
 var path = require('path'),
   mongoose = require('mongoose'),
-
-  Article = mongoose.model('Article'),
+  Comment = mongoose.model('Comment'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
  * Create an article
  */
 exports.create = function (req, res) {
-  var article = new Article(req.body);
+  var comment = new Comment(req.body);
+  comment.user = req.user;
+  comment.article = req.article;
+  comment.content = req.content;
 
-  article.user = req.user;
-  article.comment.user = req.user.displayName;
-  article.likes = 0;
-
-  article.save(function (err) {
+  comment.save(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(comment);
     }
   });
 };
@@ -35,53 +33,47 @@ exports.create = function (req, res) {
  */
 exports.read = function (req, res) {
   // convert mongoose document to JSON
-  var article = req.article ? req.article.toJSON() : {};
+  var comment = req.comment ? req.comment.toJSON() : {};
 
   // Add a custom field to the Article, for determining if the current User is the "owner".
   // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Article model.
-  article.isCurrentUserOwner = !!(req.user && article.user && article.user._id.toString() === req.user._id.toString());
+  comment.isCurrentUserOwner = !!(req.user && comment.user && comment.user._id.toString() === req.user._id.toString());
 
-  res.json(article);
+  res.json(comment);
 };
+
 /**
- * Update
+ * Update an article
  */
 exports.update = function (req, res) {
-	
-  var article = req.article;
-  article.title = req.body.title;
-  article.content = req.body.content;
-  if(req.body.comment.commentContent != ''){
-	    article.comment.commentContent = req.body.comment.commentContent;
-  article.comment.user = req.user.displayName;
-  article.comments.push(req.body.comment);
-  }
-  article.likes = req.body.likes;
-  
-  article.save(function (err) {
+  var comment = req.comment;
+
+  comment.content = req.body.cContent;
+
+  comment.save(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(comment);
     }
   });
 };
 
 /**
- * Delete an article
+ * Delete an articles
  */
 exports.delete = function (req, res) {
-  var article = req.article;
+  var comment = req.comment;
 
-  article.remove(function (err) {
+  comment.remove(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(comment);
     }
   });
 };
@@ -90,13 +82,13 @@ exports.delete = function (req, res) {
  * List of Articles
  */
 exports.list = function (req, res) {
-  Article.find().sort('-created').populate('user', 'displayName').exec(function (err, articles) {
+  Comment.find().sort('-created').populate('user', 'displayName').exec(function (err, comments) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(articles);
+      res.json(comments);
     }
   });
 };
@@ -104,23 +96,44 @@ exports.list = function (req, res) {
 /**
  * Article middleware
  */
-exports.articleByID = function (req, res, next, id) {
+exports.commentByID = function (req, res, next, id) {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'Article is invalid'
+      message: 'Comment is invalid'
     });
   }
 
-  Article.findById(id).populate('user', 'displayName').exec(function (err, article) {
+  Comment.findById(id).populate('user', 'displayName').exec(function (err, comment) {
     if (err) {
       return next(err);
-    } else if (!article) {
+    } else if (!comment) {
       return res.status(404).send({
         message: 'No article with that identifier has been found'
       });
     }
-    req.article = article;
+    req.comment = comment;
+    next();
+  });
+};
+
+exports.commentByArticle = function (req, res, next, id) {
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send({
+      message: 'Comment is invalid'
+    });
+  }
+
+  Comment.findById(id).populate('article', 'displayName').exec(function (err, comment) {
+    if (err) {
+      return next(err);
+    } else if (!comment) {
+      return res.status(404).send({
+        message: 'No comment with that identifier has been found'
+      });
+    }
+    req.comment = comment;
     next();
   });
 };

@@ -34,7 +34,7 @@
   })
       .state('articles.view', {
         url: '/:articleId',
-        templateUrl: '/modules/articles/client/views/comment-article.client.view.html',
+        templateUrl: '/modules/articles/client/views/view-article.client.view.html',
         controller: 'ArticlesController',
         controllerAs: 'vm',
         resolve: {

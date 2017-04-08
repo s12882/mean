@@ -29,10 +29,34 @@ var ArticleSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'User'
   },
+  liked: {
+	type: Boolean  
+  },
+   likes: {
+	type: Number  
+  },
+   dislikes: {
+	type: Number  
+  },
+  commentInput: {
+      type: String,
+      default: '',
+	  trim: true
+    },
   comment: {
-    type: String,
-    default: '',
-    trim: true
+    commentContent: {
+      type: String,
+      default: '',
+	  trim: true
+    },
+    user: {
+      type: String,
+      default: ''
+    },
+    created: {
+      type: Date,
+      default: Date.now
+    }
   },
   comments: [{}]
 });
@@ -42,7 +66,7 @@ var CommentSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  content: {
+  cContent: {
     type: String,
     default: '',
     trim: true
@@ -50,6 +74,10 @@ var CommentSchema = new Schema({
   user: {
     type: Schema.ObjectId,
     ref: 'User'
+  },
+  article: {
+    type: Schema.ObjectId,
+    ref: 'Article'
   }
 });
 
