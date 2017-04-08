@@ -49,7 +49,7 @@ exports.update = function (req, res) {
   var article = req.article;
   article.title = req.body.title;
   article.content = req.body.content;
-  if (req.body.comment.commentContent !== '' && req.user.displayName !== '') {
+  if (req.body.comment.commentContent !== '' || req.user.displayName !== '') {
     article.comment.commentContent = req.body.comment.commentContent;
     article.comment.user = req.user.displayName;
     article.comments.push(article.comment);
