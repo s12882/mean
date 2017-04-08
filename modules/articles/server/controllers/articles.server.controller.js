@@ -47,17 +47,16 @@ exports.read = function (req, res) {
  * Update
  */
 exports.update = function (req, res) {
-	
   var article = req.article;
   article.title = req.body.title;
   article.content = req.body.content;
-  if(req.body.comment.commentContent != ''){
-	    article.comment.commentContent = req.body.comment.commentContent;
-  article.comment.user = req.user.displayName;
-  article.comments.push(req.body.comment);
+  if (req.body.comment.commentContent !== '' && req.user.displayName) {
+    article.comment.commentContent = req.body.comment.commentContent;
+    article.comment.user = req.user.displayName;
+    article.comments.push(req.body.comment);
   }
   article.likes = req.body.likes;
-  
+
   article.save(function (err) {
     if (err) {
       return res.status(422).send({

@@ -30,6 +30,9 @@
     controllerAs: 'vm',
     resolve: {
       articleResolve: newArticle
+    },
+    data: {
+      roles: ['user']
     }
   })
       .state('articles.view', {

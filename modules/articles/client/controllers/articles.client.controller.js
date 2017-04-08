@@ -14,13 +14,19 @@
     vm.authentication = Authentication;
     vm.form = {};
     vm.save = save;
-	
-	$scope.Like = function(article){
-		vm.article.likes++;
-	}
-	$scope.Dislike = function(article){
-		vm.article.likes--;
-	}	
+
+    $scope.Like = function(article) {
+      if (vm.liked !== true) {
+        vm.article.likes++;
+        vm.liked = true;
+      }
+    };
+    $scope.Dislike = function(article) {
+      if (vm.liked !== true) {
+        vm.article.likes--;
+        vm.liked = true;
+      } 
+    };
 
     // Save Article
     function save(isValid) {
@@ -36,7 +42,6 @@
 
       function successCallback(res) {
         $state.go('articles.view'); // should we send the User to the list or the updated Article's view?
-        Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Updated!' });
       }
 
       function errorCallback(res) {
