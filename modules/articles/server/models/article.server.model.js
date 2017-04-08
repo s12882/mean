@@ -51,7 +51,8 @@ var ArticleSchema = new Schema({
     },
     user: {
       type: String,
-      default: ''
+      default: '',
+      trim: true
     },
     created: {
       type: Date,

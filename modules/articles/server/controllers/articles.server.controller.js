@@ -16,7 +16,6 @@ exports.create = function (req, res) {
   var article = new Article(req.body);
 
   article.user = req.user;
-  article.comment.user = req.user.displayName;
   article.likes = 0;
 
   article.save(function (err) {
@@ -50,10 +49,10 @@ exports.update = function (req, res) {
   var article = req.article;
   article.title = req.body.title;
   article.content = req.body.content;
-  if (req.body.comment.commentContent !== '' && req.user.displayName) {
+  if (req.body.comment.commentContent !== '' && req.user.displayName !== '') {
     article.comment.commentContent = req.body.comment.commentContent;
     article.comment.user = req.user.displayName;
-    article.comments.push(req.body.comment);
+    article.comments.push(article.comment);
   }
   article.likes = req.body.likes;
 
