@@ -8,6 +8,16 @@ var path = require('path'),
 
   Article = mongoose.model('Article'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+  
+	function containsLike(Array, user){
+	for (var i = 0; i <= Array.length; i++) {
+      if (Array[i] == user) {
+        return true;
+	    break;
+        }
+    }
+	return false;    	
+}
 
 /**
  * Create an article
@@ -51,10 +61,44 @@ exports.update = function (req, res) {
   article.content = req.body.content;
   article.comment.commentContent = req.body.comment.commentContent;
   article.comment.user = req.user.displayName;
+  article.liked = req.body.liked;
+  article.disliked = req.body.disliked;
+  
   if (article.comment.commentContent != '') {
     article.comments.push(article.comment);
   }
-  article.likes = req.body.likes;
+
+  if (req.body.liked == true) {
+	article.like.user = req.user.displayName;
+
+	if(containsLike(article.userDislikes, req.user.displayName) == true) {
+	   var index = article.userDislikes.indexOf(req.user.displayName);
+       article.userDislikes.splice(index, 1);		  
+	}
+
+	if(containsLike(article.userLikes, req.user.displayName) == false){
+      article.userLikes.push(article.like.user);
+	}else{
+      var index = article.userLikes.indexOf(req.user.displayName);
+      article.userLikes.splice(index, 1);  
+	}
+  }
+  
+  if (req.body.disliked == true) {
+	article.dislike.user = req.user.displayName;
+
+	if(containsLike(article.userLikes, req.user.displayName) == true) {
+	var index = article.userLikes.indexOf(req.user.displayName);
+    article.userLikes.splice(index, 1);		  
+	}
+
+	if(containsLike(article.userDislikes, req.user.displayName) == false){
+      article.userDislikes.push(article.dislike.user);
+	}else{
+      var index = article.userLikes.indexOf(req.user.displayName);
+      article.userDislikes.splice(index, 1);  
+	}
+  }
   
 
   article.save(function (err) {
@@ -66,7 +110,7 @@ exports.update = function (req, res) {
       res.json(article);
     }
   });
-  
+
 };
 
 /**
@@ -104,6 +148,7 @@ exports.list = function (req, res) {
 /**
  * Article middleware
  */
+ 
 exports.articleByID = function (req, res, next, id) {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

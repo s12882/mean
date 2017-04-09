@@ -35,6 +35,7 @@
       roles: ['user']
     }
   })
+
       .state('articles.view', {
         url: '/:articleId',
         templateUrl: '/modules/articles/client/views/view-article.client.view.html',
@@ -47,7 +48,7 @@
           pageTitle: 'Article {{ articleResolve.title }}'
         }
       })
-	  .state('articles.edit', {
+      .state('articles.edit', {
         url: '/:articleId/edit',
         templateUrl: '/modules/articles/client/views/form-article.client.view.html',
         controller: 'ArticlesAdminController',
@@ -73,5 +74,18 @@
 
   function newArticle(ArticlesService) {
     return new ArticlesService();
+  }
+
+  getComment.$inject = ['$stateParams', 'CommentsService'];
+  function getComment($stateParams, CommentsService) {
+    return CommentsService.get({
+      commentId: $stateParams.commentId
+    }).$promise;
+  }
+
+  newComment.$inject = ['CommentsService'];
+
+  function newComment(CommentsService) {
+    return new CommentsService();
   }
 }());

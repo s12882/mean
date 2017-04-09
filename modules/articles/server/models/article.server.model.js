@@ -30,14 +30,34 @@ var ArticleSchema = new Schema({
     ref: 'User'
   },
   liked: {
-    type: Boolean
+    type: Boolean,
+	default: false
+  },
+  disliked: {
+    type: Boolean,
+    default: false
   },
   likes: {
     type: Number
   },
-  dislikes: {
-    type: Number
+  like:{
+	user: {
+      type: String,
+      default: '',
+      trim: true
+    }   
   },
+  dislike:{
+	user: {
+      type: String,
+      default: '',
+      trim: true
+    }   
+  },
+  userDislikes: [{
+  }],
+  userLikes: [{
+  }],
   commentInput: {
     type: String,
     default: '',

@@ -16,8 +16,10 @@
   <input type="button" value="Like" ng-click="Like(vm.article); vm.save(true)"/>
   <input type="button" value="Dislike" ng-click="Dislike(vm.article); vm.save(true)"/>
  
-  <td>{{vm.article.likes}}</td>
-  
+  <td>{{vm.article.userLikes.length - vm.article.userDislikes.length}}</td>
+   <input type="hidden" data-ng-model="vm.article.liked" name="comment" value="">
+    <input type="hidden" data-ng-model="vm.article.disliked" name="comment" value="">
+	
    <div class="alert alert-warning text-center" data-ng-if="articles.comment.$resolved && !articles.comment.length">
     No Comment yet, why don't you <a data-ui-sref="articles.create">add one</a>?
   </div>
